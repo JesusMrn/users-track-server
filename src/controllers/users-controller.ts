@@ -46,7 +46,9 @@ const addUser = async (
   if (!user.name) return badRequest(res, "Info required");
 
   try {
-    return res.json(await usersModel.insertUser(user));
+    const aux = await usersModel.getUserByName(user.name);
+    if (aux) return badRequest(res, "Name already taken");
+    else return res.json(await usersModel.insertUser(user));
   } catch (err) {
     return internalServerError(res, err);
   }
