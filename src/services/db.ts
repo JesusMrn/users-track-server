@@ -12,18 +12,19 @@ db.serialize(() => {
         (id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT NOT NULL UNIQUE)`)
         .run(`CREATE TABLE connections 
-            (user INTEGER NOT NULL, 
-            userFriendWith INTEGER NOT NULL,
-            PRIMARY KEY(user, userFriendWith))`)
+            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT NOT NULL, 
+            userFriendWith TEXT NOT NULL,
+            isMutual INTEGER NOT NULL,
+            CHECK (isMutual IN (0, 1)))`)
         .run(`INSERT INTO users (name) 
             VALUES ('Bob'),
             ('Ashley'),
             ('Steve')`)
-        .run(`INSERT INTO connections (user, userFriendWith) 
-            VALUES (1, 2),
-            (2, 1),
-            (1, 3),
-            (3, 1)`);
+        .run(`INSERT INTO connections (user, userFriendWith, isMutual) 
+            VALUES ('Bob', 'Ashley', 1),
+            ('Bob', 'Steve', 0),
+            ('Ashley', 'Steve', 1)`);
 });
 
 export const dbQueryFirst = async (query: string, params?: any[]) => {

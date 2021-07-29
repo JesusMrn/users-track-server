@@ -10,7 +10,7 @@ const listUsers = async (): Promise<User[]> => {
   return res as User[];
 };
 
-const getUserByID = async (id: number): Promise<User> => {
+const getUserById = async (id: number): Promise<User> => {
   const res = await dbQueryFirst(`SELECT * FROM users WHERE id = ?`, [id]);
   return res as User | undefined;
 };
@@ -22,21 +22,24 @@ const getUserByName = async (name: string): Promise<User> => {
 
 const insertUser = async (user: User): Promise<User> => {
   await dbQuery(`INSERT INTO users (name) VALUES (?)`, [user.name]);
-  return await getUserByName(user.name);
+  const res = await dbQuery(
+    `SELECT seq AS id FROM sqlite_sequence WHERE  name = 'users'`
+  );
+  return await getUserById(res[0].id);
 };
 
-const getUsersByConnection = async (id: number): Promise<User[]> => {
+const getUsersFriends = async (name: string): Promise<User[]> => {
   const res = await dbQuery(
-    `SELECT * FROM users WHERE id IN (SELECT userFriendWith FROM connections WHERE user = ?)`,
-    [id]
+    `SELECT * FROM users WHERE name IN (SELECT userFriendWith FROM connections WHERE user = ?) OR name IN (SELECT user FROM connections WHERE userFriendWith = ? AND isMutual=1)`,
+    [name, name]
   );
   return res as User[];
 };
 
 export const usersModel = {
   listUsers,
-  getUserByID,
+  getUserById,
   getUserByName,
   insertUser,
-  getUsersByConnection,
+  getUsersFriends,
 };

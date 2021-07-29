@@ -19,7 +19,7 @@ const listUsers = async (
   }
 };
 
-const getUserByID = async (
+const getUserById = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
@@ -29,7 +29,7 @@ const getUserByID = async (
   }
 
   try {
-    let user = await usersModel.getUserByID(id);
+    let user = await usersModel.getUserById(id);
     if (user) return res.json(user);
     else return notFound(res);
   } catch (err) {
@@ -52,14 +52,14 @@ const addUser = async (
   }
 };
 
-const getUserByConnections = async (
+const getUsersFriends = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>>> => {
-  const id = parseInt(req.params.id);
-
   try {
-    return res.json(await usersModel.getUsersByConnection(id));
+    const user = await usersModel.getUserById(parseInt(req.params.id));
+    if (!user) return badRequest(res, "User doesn't exist");
+    return res.json(await usersModel.getUsersFriends(user.name));
   } catch (err) {
     return internalServerError(res, err);
   }
@@ -67,7 +67,7 @@ const getUserByConnections = async (
 
 export const userController = {
   listUsers,
-  getUserByID,
+  getUserById,
   addUser,
-  getUserByConnections,
+  getUsersFriends,
 };
