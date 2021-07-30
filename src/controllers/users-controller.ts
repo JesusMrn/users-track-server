@@ -67,9 +67,28 @@ const getUsersFriends = async (
   }
 };
 
+const getUsersStats = async (
+  req: Request,
+  res: Response
+): Promise<Response<any, Record<string, any>>> => {
+  let users: User[];
+  try {
+    users = await usersModel.listUsers();
+  } catch (err) {
+    return internalServerError(res, err);
+  }
+
+  try {
+    return res.json(await usersModel.getStats(users));
+  } catch (err) {
+    return internalServerError(res, err);
+  }
+};
+
 export const userController = {
   listUsers,
   getUserById,
   addUser,
   getUsersFriends,
+  getUsersStats,
 };

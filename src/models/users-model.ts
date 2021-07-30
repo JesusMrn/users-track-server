@@ -36,10 +36,35 @@ const getUsersFriends = async (name: string): Promise<User[]> => {
   return res as User[];
 };
 
+export type Stats = {
+  id: number;
+  name: string;
+  friends: number;
+};
+
+const getNumberOfFriends = async (user: User): Promise<Stats> => {
+  const res = await dbQueryFirst(
+    `SELECT COUNT(*) as friends FROM users WHERE name IN (SELECT userFriendWith FROM connections WHERE user = ?) OR name IN (SELECT user FROM connections WHERE userFriendWith = ? AND isMutual=1)`,
+    [user.name, user.name]
+  );
+  const aux = { id: user.id, name: user.name, friends: res.friends };
+  return aux as Stats;
+};
+
+const getStats = async (users: User[]): Promise<Stats[]> => {
+  const res = await Promise.all(
+    users.map(async (user) => {
+      return await getNumberOfFriends(user);
+    })
+  );
+  return res as Stats[];
+};
+
 export const usersModel = {
   listUsers,
   getUserById,
   getUserByName,
   insertUser,
   getUsersFriends,
+  getStats,
 };
