@@ -28,6 +28,9 @@ const addConnection = async (
   )
     return badRequest(res, "Info required");
 
+  if (connection.user === connection.userFriendWith)
+    return badRequest(res, "You cannot connect a user to himself");
+
   if (connection.isMutual != 0 && connection.isMutual != 1)
     return badRequest(
       res,
