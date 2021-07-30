@@ -8,13 +8,15 @@ To start the server run `npm run start`.
 
 To just build it run `npm run build`.
 
+To start testing `npm run test`.
+
 When the server starts, automatically a database is created in memory and some data is inserted in order to test.
 
 ## Endpoints
 
 ### Users:
 #### Get all users:
-  GET http://localhost:3000/users
+GET http://localhost:3000/users
 
 #### Get a user by id:
 GET http://localhost:3000/users/{id}

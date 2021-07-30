@@ -20,7 +20,8 @@ db.serialize(() => {
         .run(`INSERT INTO users (name) 
             VALUES ('Bob'),
             ('Ashley'),
-            ('Steve')`)
+            ('Steve'),
+            ('Pepe')`)
         .run(`INSERT INTO connections (user, userFriendWith, isMutual) 
             VALUES ('Bob', 'Ashley', 1),
             ('Bob', 'Steve', 0),
